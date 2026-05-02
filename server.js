@@ -48,13 +48,21 @@ app.use('/api/submissions', submissionRoutes);
 // Database connection
 const connectDB = async () => {
   try {
-    console.log('Initializing MySQL Database...');
+    console.log('Connecting to Database...');
+    if (process.env.DATABASE_URL) {
+      console.log('Production mode: Connecting to PostgreSQL on Render');
+    } else {
+      console.log('Local mode: Connecting to MySQL');
+    }
+    
     await initializeDatabase();
     await sequelize.authenticate();
-    console.log('MySQL connected via Sequelize');
+    console.log('Database connection established successfully');
 
     // Sync models
+    console.log('Syncing models...');
     await sequelize.sync({ alter: true }); 
+    console.log('Models synced successfully');
     
     // Seed Database if empty
     const userCount = await User.count();
@@ -67,7 +75,6 @@ const connectDB = async () => {
       const student = await User.create({ name: 'Student User', email: 'student@student.com', password: hashedPassword, role: 'student' });
       const group = await Group.create({ name: 'Alpha Group' });
       
-      // Assign student to group
       student.groupId = group.id;
       await student.save();
       
@@ -81,11 +88,12 @@ const connectDB = async () => {
       await Task.create({ title: 'Design Landing Page', description: 'Create UI for the landing page', assignedTo: student.id, projectId: project.id, status: 'completed' });
       await Task.create({ title: 'Setup Backend API', description: 'Create REST endpoints', assignedTo: student.id, projectId: project.id, status: 'pending' });
       
-      console.log('Database seeded with admin@admin.com and student@student.com (password: password123)');
+      console.log('Database seeded successfully');
     }
     
   } catch (err) {
-    console.error('MySQL connection/sync error:', err);
+    console.error('CRITICAL STARTUP ERROR:', err);
+    process.exit(1); // Force exit so Render knows it failed
   }
 };
 connectDB();
