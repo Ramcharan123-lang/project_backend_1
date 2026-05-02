@@ -22,7 +22,8 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8",
-    "socket.io": "^4.8.3"
+    "socket.io": "4.7.5",
+    "engine.io": "6.5.5"
   },
   "engines": {
     "node": "20.x"
