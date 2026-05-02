@@ -25,7 +25,7 @@
     "socket.io": "^4.8.3"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "20.x"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
